@@ -1,11 +1,11 @@
 from threading import Thread
 from pygame import mixer 
+from termcolor import colored
 import speech_recognition as sr
 import requests, json
 import io
 import os
 import time
-from termcolor import colored
 
 os.system("cls")
 time.sleep(1)
@@ -123,6 +123,9 @@ voicechanger_active = True
 def transform_speech(chunk):
     audio_data = chunk["audio_blob"]
     new_data = transform_speech_endpoint(audio_data)  
+    if not new_data:
+        chunk["failed"] = True
+        return 
     chunk["audio_blob"] = new_data
     chunk["processed_flag"] = True
 
@@ -134,6 +137,7 @@ def record():
         audio_data = record_audio() 
         audio_queue[chunk_index] = {
             "audio_blob" : audio_data, 
+            "failed" : False, 
             "processed_flag" : False
         }
         transform_speech(audio_queue[chunk_index])
@@ -148,6 +152,7 @@ def main():
             first_index = min(audio_queue.keys())
             data = audio_queue.pop(first_index)                
             while not data["processed_flag"]:
+                if data["failed"]: continue
                 continue
             play_audio(data["audio_blob"]) 
 
