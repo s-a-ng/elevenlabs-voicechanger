@@ -54,10 +54,13 @@ def record_audio():
     with sr.Microphone() as source:
         recognizer.adjust_for_ambient_noise(source)
         print(colored("Listening", "green"))
-        audio = recognizer.listen(source)
-
-    audio_file = io.BytesIO(audio.get_wav_data())
-    return audio_file
+        while True: 
+            audio = recognizer.listen(source)
+            try:
+                print("You said", recognizer.recognize_google(audio))
+                return io.BytesIO(audio.get_wav_data())
+            except sr.UnknownValueError:
+                continue
 
 def play_audio(audio_file):
     file_path = "temp_audio.mp3"
