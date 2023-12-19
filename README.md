@@ -1,5 +1,5 @@
 # HOW TO USE
-# Feel free to commit changes that make it look nicer
+# Feel free to commit changes that make it look nicer ( or faster ) 
 
 ## I am using python 3.11.4
 
