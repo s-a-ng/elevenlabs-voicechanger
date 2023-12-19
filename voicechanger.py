@@ -65,6 +65,7 @@ def play_audio(audio_file):
     with open(file_path, 'wb') as f:
         f.write(audio_file.getvalue())
 
+
     mixer.music.load(file_path)
     mixer.music.set_volume(1.0)
     mixer.music.play()
@@ -116,9 +117,7 @@ audio_queue = {}
 voicechanger_active = True
 
 @threaded_function
-def transform_speech(index):
-    global audio_queue
-    chunk = audio_queue[index]
+def transform_speech(chunk):
     audio_data = chunk["audio_blob"]
     new_data = transform_speech_endpoint(audio_data)  
     chunk["audio_blob"] = new_data
@@ -127,18 +126,19 @@ def transform_speech(index):
 @threaded_function
 def record():
     global chunk_index, audio_queue, voicechanger_active
+    
     while voicechanger_active:
         audio_data = record_audio() 
         audio_queue[chunk_index] = {
             "audio_blob" : audio_data, 
             "processed_flag" : False
         }
-        transform_speech(chunk_index)
+        transform_speech(audio_queue[chunk_index])
         chunk_index += 1
 
 def main():
     try:
-        global audio_queue
+        global audio_queue, voicechanger_active
         while True:
             if not audio_queue:  
                 continue
@@ -146,8 +146,8 @@ def main():
             data = audio_queue.pop(first_index)                
             while not data["processed_flag"]:
                 continue
-            
             play_audio(data["audio_blob"]) 
+
     except KeyboardInterrupt:
         print("Stopping")
         voicechanger_active = False
