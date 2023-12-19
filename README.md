@@ -1,5 +1,5 @@
 ### 🚀🌟 BLAZINGLY FAST and MEMORY SAFE ElevenLabs VoiceChanger Setup Guide 🌟🚀 
-
+ <br><br>
 ### 🚨👇 STEPS TO GET STARTED FROM EXE 👇🚨
 ```https://github.com/s-a-ng/elevenlabs-voicechanger/releases/tag/release```
  - 🎧 Install https://vb-audio.com/Cable/ 🎧 (restart computer afterwards)
@@ -20,6 +20,6 @@
  - Switch your microphone input device to CABLE Input (VB-Audio Virtual Cable)
 
  - You're all set!! ✅🏆🎉
-
+ <br><br>
 https://github.com/s-a-ng/elevenlabs-voicechanger/assets/61368081/f903e81c-6cd6-4fc8-9a17-66709efa207a
 
