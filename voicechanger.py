@@ -113,6 +113,7 @@ def threaded_function(func):
 
 chunk_index = 0
 audio_queue = {}
+voicechanger_active = True
 
 @threaded_function
 def transform_speech(index):
@@ -125,8 +126,8 @@ def transform_speech(index):
 
 @threaded_function
 def record():
-    global chunk_index, audio_queue
-    while True:
+    global chunk_index, audio_queue, voicechanger_active
+    while voicechanger_active:
         audio_data = record_audio() 
         audio_queue[chunk_index] = {
             "audio_blob" : audio_data, 
@@ -149,6 +150,7 @@ def main():
             play_audio(data["audio_blob"]) 
     except KeyboardInterrupt:
         print("Stopping")
+        voicechanger_active = False
 
 record()
 main()
