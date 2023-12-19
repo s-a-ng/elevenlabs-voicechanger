@@ -17,7 +17,7 @@
 
  - Add your voice ids (or just use santa 🎅🎅) 
 
- - Switch your microphone input device to CABLE Input (VB-Audio Virtual Cable)
+ - Switch your microphone input device to CABLE Input (VB-Audio Virtual Cable) 🎤🎤🎙️🎙️🎙️
 
- - You're all set!! ✅🏆🎉
+ - You're all set!! ✅🏆🎉🤑🤑🤑
 
