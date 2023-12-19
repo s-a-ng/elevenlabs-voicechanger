@@ -52,6 +52,7 @@ mixer.init(devicename='CABLE Input (VB-Audio Virtual Cable)')
 def record_audio():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
+        recognizer.adjust_for_ambient_noise(source)
         print(colored("Listening", "green"))
         audio = recognizer.listen(source)
 
