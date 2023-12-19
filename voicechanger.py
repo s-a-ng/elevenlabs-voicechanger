@@ -115,10 +115,7 @@ audio_queue = {}
 @threaded_function
 def transform_speech(index):
     global audio_queue
-    chunk = audio_queue.get(index)
-    if not chunk:
-        return 
-    
+    chunk = audio_queue[index]
     audio_data = chunk["audio_blob"]
     new_data = transform_speech_endpoint(audio_data)  
     chunk["audio_blob"] = new_data
