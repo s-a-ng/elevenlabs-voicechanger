@@ -16,3 +16,7 @@
  - Switch your microphone input device to CABLE Input (VB-Audio Virtual Cable)
 
  - You're all set!! ✅
+
+
+https://github.com/s-a-ng/elevenlabs-voicechanger/assets/61368081/f903e81c-6cd6-4fc8-9a17-66709efa207a
+
