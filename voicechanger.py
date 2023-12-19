@@ -28,7 +28,7 @@ mixer.init(devicename='CABLE Input (VB-Audio Virtual Cable)')
 def record_audio():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
-        print("Listening")
+        print("Listening to your voice")
         audio = recognizer.listen(source)
 
     audio_file = io.BytesIO(audio.get_wav_data())
@@ -99,6 +99,7 @@ audio_queue = []
 def transform_speech(index):
     chunk = audio_queue[index]
     audio_data = chunk["audio_blob"]
+    print("Transforming your voice")
     new_data = transform_speech_endpoint(audio_data)
     chunk["audio_blob"] = new_data
     chunk["processed_flag"] = True
