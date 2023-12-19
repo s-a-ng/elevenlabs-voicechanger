@@ -10,7 +10,7 @@ from termcolor import colored
 os.system("cls")
 time.sleep(1)
 
-voices = { # add your voice ids here
+voices = {
     "santa": "knrPHWnBmmDHMoiMeP3l"
 }
 
@@ -95,7 +95,7 @@ def transform_speech_endpoint(audio_file):
 
         content = response.content
 
-        if len(content) > 200: 
+        if len(content) < 200: 
             print(colored(response.content, "blue"))
 
         return io.BytesIO(content)  
