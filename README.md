@@ -3,7 +3,10 @@
 
 ## I am using python 3.11.4
 
-# Steps:
+# Steps from exe (https://github.com/s-a-ng/elevenlabs-voicechanger/releases/tag/release):
+ - Run program and add Bearer token when prompted
+
+# Steps from source:
  ```pip install pyaudio SpeechRecognition pygame termcolor ```
 
  - Install https://vb-audio.com/Cable/ (restart computer afterwards)
