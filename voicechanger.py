@@ -155,7 +155,9 @@ def main():
                 continue
                 
             if data["failed"]:
+                print(colored("Failed to convert this chunk. There may be something wrong with your ElevenLabs account.", "red"))
                 continue
+            print(colored("Playing audio chunk", "green"))
             play_audio(data["audio_blob"]) 
 
     except KeyboardInterrupt:
