@@ -10,7 +10,7 @@ os.system("cls")
 time.sleep(1)
 
 
-voices = {
+voices = { # Add your voice ids here
     "santa": "knrPHWnBmmDHMoiMeP3l"
 }
 
