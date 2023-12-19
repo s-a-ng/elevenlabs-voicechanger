@@ -1,5 +1,4 @@
 ### 🚀🌟 BLAZINGLY FAST and MEMORY SAFE ElevenLabs VoiceChanger Setup Guide 🌟🚀 
- <br></br>
 ### 🚨👇 STEPS TO GET STARTED FROM EXE 👇🚨
 ```https://github.com/s-a-ng/elevenlabs-voicechanger/releases/tag/release```
  - 🎧 Install https://vb-audio.com/Cable/ 🎧 (restart computer afterwards)
