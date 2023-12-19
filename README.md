@@ -11,7 +11,7 @@
 
  - Install https://vb-audio.com/Cable/ (restart computer afterwards) 🎧
 
- - Get your🔑 bearer token 🔑 from ElevenLab's website (api for speech to speech is not released yet 🤫🤫🤫🕵️‍♂️🔒)
+ - Get your🔑 Bearer Token 🔑 from ElevenLab's website (api for speech to speech is not released yet 🤫🤫🤫🕵️‍♂️🔒)
 
  - Start the program and paste in that Bearer token, entire thing (Bearer xxx) 🔥🔑
 
