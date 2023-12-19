@@ -2,7 +2,7 @@
 
 ## I am using python 3.11.4
 
-#Steps:
+# Steps:
  ```pip install pyaudio SpeechRecognition pygame```
 
  - Install https://vb-audio.com/Cable/ (restart computer afterwards)
