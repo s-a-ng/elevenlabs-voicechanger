@@ -123,11 +123,11 @@ voicechanger_active = True
 def transform_speech(chunk):
     audio_data = chunk["audio_blob"]
     new_data = transform_speech_endpoint(audio_data)  
+    chunk["processed_flag"] = True
     if not new_data:
         chunk["failed"] = True
         return 
     chunk["audio_blob"] = new_data
-    chunk["processed_flag"] = True
 
 @threaded_function
 def record():
@@ -152,7 +152,9 @@ def main():
             first_index = min(audio_queue.keys())
             data = audio_queue.pop(first_index)                
             while not data["processed_flag"]:
-                if data["failed"]: continue
+                continue
+                
+            if data["failed"]:
                 continue
             play_audio(data["audio_blob"]) 
 
