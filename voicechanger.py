@@ -142,11 +142,10 @@ def main():
                 continue
             first_index = min(audio_queue.keys())
             data = audio_queue.pop(first_index)                
-            
             while not data["processed_flag"]:
                 continue
+            
             play_audio(data["audio_blob"]) 
-
     except KeyboardInterrupt:
         print("Stopping")
 
