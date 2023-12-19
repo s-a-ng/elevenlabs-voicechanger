@@ -1,4 +1,5 @@
 # HOW TO USE
+# Feel free to commit changes that make it look nicer
 
 ## I am using python 3.11.4
 
