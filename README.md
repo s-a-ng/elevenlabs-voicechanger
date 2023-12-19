@@ -7,10 +7,6 @@
 
 
 
- 
-
- 
-
 
 ### 🐍👇 STEPS FROM SOURCE (For you debug demons out there) 👇🐍
  ```🐍Python 3.11.4🐍```
