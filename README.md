@@ -6,7 +6,7 @@
  - Run program and add Bearer token when prompted
 
 # Steps from source:
- ```I am using Python 3.11.4```
+ ```Python 3.11.4```
  ```pip install pyaudio SpeechRecognition pygame termcolor ```
 
  - Install https://vb-audio.com/Cable/ (restart computer afterwards)
