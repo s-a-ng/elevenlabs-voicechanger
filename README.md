@@ -4,9 +4,6 @@
 ```https://github.com/s-a-ng/elevenlabs-voicechanger/releases/tag/release```
  - 🎧 Install https://vb-audio.com/Cable/ 🎧 (restart computer afterwards)
  - Run program and add Bearer token when prompted
-
-
- <br><br>
  <br><br>
 ### 🐍👇 STEPS FROM SOURCE (For you debug demons out there) 👇🐍
  ```🐍Python 3.11.4🐍```
