@@ -4,7 +4,7 @@
 ## I am using python 3.11.4
 
 # Steps:
- ```pip install pyaudio SpeechRecognition pygame```
+ ```pip install pyaudio SpeechRecognition pygame termcolor ```
 
  - Install https://vb-audio.com/Cable/ (restart computer afterwards)
 
