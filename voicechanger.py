@@ -5,36 +5,57 @@ import requests, json
 import io
 import os
 import time
+from termcolor import colored
 
 os.system("cls")
 time.sleep(1)
 
-
-voices = { # Add your voice ids here
+voices = { # add your voice ids here
     "santa": "knrPHWnBmmDHMoiMeP3l"
 }
 
-voice_id = voices[input("Voice: ")]
+voice_id = voices[input(colored("Voice: ", "green"))]
+
+def check_bearer(Bearer):
+    headers = {
+        "Authorization": Bearer
+    }
+    response = requests.get("https://api.elevenlabs.io/v1/voices", headers=headers)
+    return response.status_code == 200
+
+def ask_for_token():
+    Bearer = input(colored("Token: ", "green"))
+    if not check_bearer(Bearer):
+        print(colored("Invalid token. Try again", "red"))
+        return ask_for_token()
+    print(colored("Valid token!", "green"))
+    return Bearer
+
+if not os.path.exists("Bearer.txt"):
+    with open("Bearer.txt", "w") as f:
+        print(colored("You are missing your token. Please add it below.", "blue"))
+        f.write(ask_for_token())
 
 with open("Bearer.txt", "r") as f:
     Bearer = f.read()
-    Bearer = Bearer.encode()
+
+if not check_bearer(Bearer):
+    print(colored("Your bearer token is invalid. Enter your new one below.", "red"))
+    with open("Bearer.txt", "w") as f:
+        f.write(ask_for_token())
 
 mixer.init() 
 mixer.quit() 
 mixer.init(devicename='CABLE Input (VB-Audio Virtual Cable)') 
 
-
 def record_audio():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
-        print("Listening to your voice")
+        print(colored("Listening", "green"))
         audio = recognizer.listen(source)
 
     audio_file = io.BytesIO(audio.get_wav_data())
     return audio_file
-
-
 
 def play_audio(audio_file):
     file_path = "temp_audio.mp3"
@@ -52,7 +73,6 @@ def play_audio(audio_file):
     mixer.music.stop()
     mixer.music.unload()
     os.remove(file_path)
-
 
 def transform_speech_endpoint(audio_file):
     try: 
@@ -76,13 +96,11 @@ def transform_speech_endpoint(audio_file):
         content = response.content
 
         if len(content) > 200: 
-            print(response.content)
-
+            print(colored(response.content, "blue"))
 
         return io.BytesIO(content)  
     except Exception as e:
         return None
-
 
 def threaded_function(func):
     def wrapper(*args, **kwargs):
@@ -92,41 +110,47 @@ def threaded_function(func):
     return wrapper
 
 chunk_index = 0
-audio_queue = []
-
+audio_queue = {}
 
 @threaded_function
 def transform_speech(index):
-    chunk = audio_queue[index]
+    global audio_queue
+    chunk = audio_queue.get(index)
+    if not chunk:
+        return 
+    
     audio_data = chunk["audio_blob"]
-    print("Transforming your voice")
-    new_data = transform_speech_endpoint(audio_data)
+    new_data = transform_speech_endpoint(audio_data)  
     chunk["audio_blob"] = new_data
     chunk["processed_flag"] = True
 
 @threaded_function
 def record():
+    global chunk_index, audio_queue
     while True:
-        audio_data = record_audio()
+        audio_data = record_audio() 
         audio_queue[chunk_index] = {
             "audio_blob" : audio_data, 
             "processed_flag" : False
         }
-        chunk_index += 1
         transform_speech(chunk_index)
+        chunk_index += 1
 
 def main():
     try:
+        global audio_queue
         while True:
-            if len(audio_queue) == 0:
+            if not audio_queue:  
                 continue
-            data = audio_queue.pop(0)
+            first_index = min(audio_queue.keys())
+            data = audio_queue.pop(first_index)                
+            
             while not data["processed_flag"]:
                 continue
-            play_audio(data["audio_blob"])
+            play_audio(data["audio_blob"]) 
 
     except KeyboardInterrupt:
         print("Stopping")
-      
+
 record()
 main()
