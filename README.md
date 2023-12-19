@@ -10,7 +10,7 @@
 
  - Get bearer token from elevenlabs website (api for speech to speech is not released yet)
 
- - Make a file called Bearer.txt in the same directory as voicechanger.py and put the whole token in there (Bearer xxx)
+ - Start the program and paste your Bearer token, entire thing (Bearer xxx)
 
  - Add your voice ids (or just use santa 🎅🎅) 
 
