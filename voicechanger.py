@@ -14,7 +14,6 @@ voices = {
     "santa": "knrPHWnBmmDHMoiMeP3l"
 }
 
-voice_id = voices[input(colored("Voice: ", "green"))]
 
 def check_bearer(Bearer):
     headers = {
@@ -43,6 +42,8 @@ if not check_bearer(Bearer):
     print(colored("Your bearer token is invalid. Enter your new one below.", "red"))
     with open("Bearer.txt", "w") as f:
         f.write(ask_for_token())
+
+voice_id = voices[input(colored("Voice: ", "green"))]
 
 mixer.init() 
 mixer.quit() 
