@@ -11,7 +11,10 @@ os.system("cls")
 time.sleep(1)
 
 voices = {
-    "santa": "knrPHWnBmmDHMoiMeP3l"
+    "santa": "knrPHWnBmmDHMoiMeP3l",
+    "perth" : "q5hBSFo3S9aP68ohDElN",
+    "obama": "nI5Xtti3YkwPsIQKwmVX",
+    "jayln": "1rC87iFsW2c5Ufr6qDwt"
 }
 
 
@@ -41,7 +44,10 @@ with open("Bearer.txt", "r") as f:
 if not check_bearer(Bearer):
     print(colored("Your bearer token is invalid. Enter your new one below.", "red"))
     with open("Bearer.txt", "w") as f:
-        f.write(ask_for_token())
+        Bearer = ask_for_token()
+        f.write(Bearer)
+
+
 
 voice_id = voices[input(colored("Voice: ", "green"))]
 
@@ -100,9 +106,22 @@ def transform_speech_endpoint(audio_file):
         response = requests.post(url, headers=headers, data=data, files=files)
 
         content = response.content
+        if len(content) <= 200: 
+            try:
+                load = json.loads(content)
+                details = load["detail"]
+                error_type = details["status"]
+                message = details["message"]
 
-        if len(content) < 200: 
-            print(colored(response.content, "blue"))
+                print(f'''
+{colored("ElevenLabs returned an error", "light_red")}:
+    {colored(f'Error type: "{error_type}"', "red")}
+    {colored(f'More details: "{message}"', "red")}
+                ''')
+
+                return None
+            except Exception:
+                return None
 
         return io.BytesIO(content)  
     except Exception as e:
@@ -134,14 +153,15 @@ def record():
     global chunk_index, audio_queue, voicechanger_active
     
     while voicechanger_active:
-        audio_data = record_audio() 
-        audio_queue[chunk_index] = {
-            "audio_blob" : audio_data, 
-            "failed" : False, 
-            "processed_flag" : False
-        }
-        transform_speech(audio_queue[chunk_index])
-        chunk_index += 1
+        audio = record_audio()
+        if audio: 
+            audio_queue[chunk_index] = {
+                "audio_blob" : audio, 
+                "failed" : False, 
+                "processed_flag" : False
+            }
+            transform_speech(audio_queue[chunk_index])
+            chunk_index += 1
 
 def main():
     try:
@@ -157,12 +177,13 @@ def main():
             if data["failed"]:
                 print(colored("Failed to convert this chunk. There may be something wrong with your ElevenLabs account.", "red"))
                 continue
-            print(colored("Playing audio chunk", "green"))
+            print(colored("Playing processed audio", "green"))
             play_audio(data["audio_blob"]) 
 
     except KeyboardInterrupt:
         print("Stopping")
         voicechanger_active = False
+        exit()
 
 record()
 main()
