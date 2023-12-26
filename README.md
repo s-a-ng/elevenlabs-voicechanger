@@ -14,8 +14,6 @@
 
  - Start the program and paste in that Bearer token, entire thing (Bearer xxx) 🔥🔑
 
- - Add your voice ids (or just use santa 🎅🎅) 
-
  - Switch your microphone input device to CABLE Input (VB-Audio Virtual Cable) 🎤🎤🎙️🎙️🎙️
 
  - You're all set!! ✅🏆🎉🤑🤑🤑
