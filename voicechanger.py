@@ -6,17 +6,57 @@ import requests, json
 import io
 import os
 import time
-
+import re 
 os.system("cls")
 time.sleep(1)
 
-voices = {
-    "santa": "knrPHWnBmmDHMoiMeP3l",
-    "perth" : "q5hBSFo3S9aP68ohDElN",
-    "obama": "nI5Xtti3YkwPsIQKwmVX",
-    "jayln": "1rC87iFsW2c5Ufr6qDwt"
+voices_map = {
+
 }
 
+def remove_emojis(text):
+    emoji_pattern = re.compile("["
+                               u"\U0001F600-\U0001F64F"  # emoticons
+                               u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                               u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                               u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                               u"\U00002500-\U00002BEF"  # chinese char
+                               u"\U00002702-\U000027B0"
+                               u"\U00002702-\U000027B0"
+                               u"\U000024C2-\U0001F251"
+                               u"\U0001f926-\U0001f937"
+                               u"\U00010000-\U0010ffff"
+                               u"\u2640-\u2642"
+                               u"\u2600-\u2B55"
+                               u"\u200d"
+                               u"\u23cf"
+                               u"\u23e9"
+                               u"\u231a"
+                               u"\ufe0f"  # dingbats
+                               u"\u3030"
+                               "]+", flags=re.UNICODE)
+    return emoji_pattern.sub(r'', text)
+
+
+def get_voices(Bearer):
+    headers = {
+        "Authorization": Bearer
+    }
+
+    parsed_voices = { }
+    voices = requests.get("https://api.elevenlabs.io/v1/voices", headers=headers).json()
+
+    voices = voices['voices']
+    
+    print(colored("Available voices: ", "blue"))
+
+    for voice in voices:
+        category = voice["category"]
+        name = remove_emojis(voice["name"]).strip()
+        voices_map[name] = voice["voice_id"]
+        print(colored(f"    - {name} ({category})", "light_blue"))
+
+    return parsed_voices
 
 def check_bearer(Bearer):
     headers = {
@@ -26,7 +66,7 @@ def check_bearer(Bearer):
     return response.status_code == 200
 
 def ask_for_token():
-    Bearer = input(colored("Token: ", "green"))
+    Bearer = input(colored("Token: ", "light_green"))
     if not check_bearer(Bearer):
         print(colored("Invalid token. Try again", "red"))
         return ask_for_token()
@@ -47,9 +87,18 @@ if not check_bearer(Bearer):
         Bearer = ask_for_token()
         f.write(Bearer)
 
+get_voices(Bearer)
+
+while True: 
+    voice_input = input(colored("Select your voice: ", "light_green"))
+    voice_id = voices_map.get(voice_input)
+    if voice_id:
+        break
+    else:
+        print(colored("Invalid voice", "red"))
 
 
-voice_id = voices[input(colored("Voice: ", "green"))]
+os.system("cls")
 
 mixer.init() 
 mixer.quit() 
@@ -62,8 +111,11 @@ def record_audio():
         print(colored("Listening", "green"))
         while True: 
             audio = recognizer.listen(source)
+            #a = time.time()
             try:
-                print("You said", recognizer.recognize_google(audio))
+                transcription = recognizer.recognize_google(audio) # detects voice activity better. if it errors it could not pick up any speech
+                #print("You said", transcription)
+                #print(time.time()-a)
                 return io.BytesIO(audio.get_wav_data())
             except sr.UnknownValueError:
                 continue
@@ -115,8 +167,10 @@ def transform_speech_endpoint(audio_file):
 
                 print(f'''
 {colored("ElevenLabs returned an error", "light_red")}:
-    {colored(f'Error type: "{error_type}"', "red")}
-    {colored(f'More details: "{message}"', "red")}
+    {colored(f'- Error type: "{error_type}"', "red")}
+    {colored(f'- More details: "{message}"', "red")}
+
+{colored(f"There is a good chance this error is because your Bearer token expired.{chr(10)}Please try restarting the program", "red")}
                 ''')
 
                 return None
@@ -130,6 +184,7 @@ def transform_speech_endpoint(audio_file):
 def threaded_function(func):
     def wrapper(*args, **kwargs):
         t = Thread(target=func, args=args, kwargs=kwargs)
+        t.daemon = True
         t.start()
         return t
     return wrapper
@@ -177,7 +232,7 @@ def main():
             if data["failed"]:
                 print(colored("Failed to convert this chunk. There may be something wrong with your ElevenLabs account.", "red"))
                 continue
-            print(colored("Playing processed audio", "green"))
+            print(colored("Playing audio chunk", "green"))
             play_audio(data["audio_blob"]) 
 
     except KeyboardInterrupt:
