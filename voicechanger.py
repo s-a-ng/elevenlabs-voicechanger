@@ -174,14 +174,13 @@ class AudioChunk:
             self.transcription_processed_flag = True
             self.transcription = transcript
 
-            self.apply_speech_to_speech_async()
+            self.apply_speech_to_speech()
 
-            #print("sucessfully transcribed speech, calling sts")
+           # print("sucessfully transcribed speech, calling sts")
         except Exception as e:
             self.remove_chunk()
     
-    @threaded_function
-    def apply_speech_to_speech_async(self):
+    def apply_speech_to_speech(self):
         try: 
             url = f"https://api.elevenlabs.io/v1/speech-to-speech/{voice_id}/stream"
             headers = {
@@ -241,7 +240,7 @@ stream = audio.open(format=pyaudio.paInt16,
                     frames_per_buffer=CHUNK)
 
 
-
+@threaded_function
 def record_audio():
     while True:
         frames = []
@@ -265,13 +264,12 @@ def record_audio():
             if len(frames) >= frame_cap and num_silent_chunks >= one_second:
                 silence_percent = noise_chunks / frame_cap * 100
 
-                print(colored(f"{silence_percent}% of chunk detected as speech", "blue"))
+                print(colored(f"{int(silence_percent)}% of chunk detected as speech", "light_blue"))
 
                 if silence_percent < 20:
-                    print("mostly silent")
                     break
 
-                print("threshold reached")
+                print(colored("threshold reached", "blue"))
                 wav_buffer = io.BytesIO()
                 with wave.open(wav_buffer, 'wb') as wf:
                     wf.setnchannels(CHANNELS)
@@ -335,7 +333,7 @@ def main():
         while True:
             play_audio_chunks()
     except KeyboardInterrupt:
-        print("Stopping")
+        print(colored("Stopping voice changer", "red"))
         stream.stop_stream()
         stream.close()
         audio.terminate()
