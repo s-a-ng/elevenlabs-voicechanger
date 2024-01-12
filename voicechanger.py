@@ -262,7 +262,7 @@ def record_audio():
 
             frames.append(data)
             if len(frames) >= frame_cap and num_silent_chunks >= one_second:
-                silence_percent = noise_chunks / frame_cap * 100
+                silence_percent = noise_chunks / len(frames) * 100
 
                 print(colored(f"{int(silence_percent)}% of chunk detected as speech", "light_blue"))
 
