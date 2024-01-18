@@ -117,7 +117,7 @@ while True:
         print(colored("Invalid voice", "red"))
 
 while True:
-    chunk_transcription_enabled = input("Transcribe audio chunks? (This will help properly detect speech, at the cost of time)").lower().strip()
+    chunk_transcription_enabled = input("Transcribe audio chunks? (This will help properly detect speech, at the cost of time): ").lower().strip()
     if chunk_transcription_enabled in ("y", "n"):
         chunk_transcription_enabled = chunk_transcription_enabled == "y"
         break
@@ -172,7 +172,6 @@ class AudioChunk:
         if chunk_transcription_enabled:
             self.transcribe_then_sts()
         else:
-            print("calling 11labs")
             self.apply_speech_to_speech()
 
 
@@ -211,10 +210,10 @@ class AudioChunk:
             files = {'audio': ('audio.wav', self.wav_buffer, 'audio/wav')}
 
             response = requests.post(url, headers=headers, data=data, files=files)
-            print("repsonse")
+        #    print("repsonse")
             content = response.content
             if len(content) <= 200: 
-                print(content)
+                #print(content)
                 try:
                     load = json.loads(content)
                     details = load["detail"]
