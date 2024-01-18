@@ -116,6 +116,11 @@ while True:
     else:
         print(colored("Invalid voice", "red"))
 
+while True:
+    chunk_transcription_enabled = input("Transcribe audio chunks? (This will help properly detect speech, at the cost of time)").lower().strip()
+    if chunk_transcription_enabled in ("y", "n"):
+        chunk_transcription_enabled = chunk_transcription_enabled == "y"
+        break
 
 clear()
 mixer.init() 
@@ -127,6 +132,8 @@ CHANNELS = 1
 CHUNK = 480
 RECORD_SECONDS = 3
 
+ELEVENLABS_STABILITY = 0.4
+ELEVENLABS_SIMILARITY_BOOST = 0.5
 
 def convert_wav_buffer_to_flac(wav_buffer):
     sound = AudioSegment.from_wav(wav_buffer)
@@ -150,8 +157,7 @@ class AudioChunk:
 
         self.eleven_labs_data = None
 
-        self.elevenlabs_processed_flag = False
-        self.transcription_processed_flag = False
+        self.chunk_complete_processing = False
 
         self.transcription = ""
         self.index = chunk_index
@@ -159,11 +165,18 @@ class AudioChunk:
         chunk_index += 1 
     
     def remove_chunk(self):
-        #print("Removing chunk", self.index)
         del voice_chunks[self.index]
 
     @threaded_function
-    def transcribe(self): # scuffed but works better than webrtcvad by itself 
+    def begin_processing(self):
+        if chunk_transcription_enabled:
+            self.transcribe_then_sts()
+        else:
+            print("calling 11labs")
+            self.apply_speech_to_speech()
+
+
+    def transcribe_then_sts(self): 
         url = f"http://www.google.com/speech-api/v2/recognize?client=chromium&lang=en-US&key=AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw"
         headers = {"Content-Type": "audio/x-flac; rate=" + str(RATE)}
         response = requests.post(url, data=self.flac_data, headers=headers)
@@ -171,7 +184,7 @@ class AudioChunk:
         try: 
             response_json = json.loads(response.text.split('\n', 1)[1])
             transcript = response_json["result"][0]["alternative"][0]["transcript"]
-            self.transcription_processed_flag = True
+
             self.transcription = transcript
 
             self.apply_speech_to_speech()
@@ -189,8 +202,8 @@ class AudioChunk:
             data = {
                 "model_id": "eleven_english_sts_v2",
                 "voice_settings" : json.dumps({
-                    "stability": 0.4,
-                    "similarity_boost": 0.3
+                    "stability": ELEVENLABS_STABILITY,    
+                    "similarity_boost": ELEVENLABS_SIMILARITY_BOOST,  
                 }),
             }
 
@@ -198,9 +211,10 @@ class AudioChunk:
             files = {'audio': ('audio.wav', self.wav_buffer, 'audio/wav')}
 
             response = requests.post(url, headers=headers, data=data, files=files)
-
+            print("repsonse")
             content = response.content
             if len(content) <= 200: 
+                print(content)
                 try:
                     load = json.loads(content)
                     details = load["detail"]
@@ -219,10 +233,10 @@ class AudioChunk:
                 except Exception:
                     self.remove_chunk()
                     return 
-
+                
             self.eleven_labs_data = io.BytesIO(content) 
-            self.elevenlabs_processed_flag = True 
-            #print("applied sts on", self.index)
+            self.chunk_complete_processing = True 
+
         except Exception:
             self.remove_chunk()
             return 
@@ -262,11 +276,11 @@ def record_audio():
 
             frames.append(data)
             if len(frames) >= frame_cap and num_silent_chunks >= one_second:
-                silence_percent = noise_chunks / len(frames) * 100
+                speech_percent = noise_chunks / len(frames) * 100
+                threshold = 20 / (RECORD_SECONDS / 3) 
 
-                print(colored(f"{int(silence_percent)}% of chunk detected as speech", "light_blue"))
-
-                if silence_percent < 20:
+                print(colored(f"{int(speech_percent)}% of chunk detected as speech (threshold is {threshold})", "light_blue"))
+                if speech_percent < threshold:
                     break
 
                 print(colored("threshold reached", "blue"))
@@ -280,7 +294,7 @@ def record_audio():
                 wav_buffer.seek(0) 
 
                 chunk = AudioChunk(wav_buffer)
-                chunk.transcribe()
+                chunk.begin_processing()
 
                 break
 
@@ -321,7 +335,7 @@ def play_audio_chunks(): # Race condition galore
             continue
 
         try:
-            if chunk.transcription_processed_flag and chunk.elevenlabs_processed_flag:
+            if chunk.chunk_complete_processing:
                 break
         except AttributeError: 
             continue
