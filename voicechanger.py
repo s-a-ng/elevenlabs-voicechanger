@@ -6,11 +6,7 @@ from threading import Thread
 import io, os, re
 import time, wave, json
 
-import pyaudio
-
-import requests
-
-import webrtcvad, requests
+import webrtcvad, requests, pyaudio
 
 
 def clear():
