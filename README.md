@@ -1,21 +1,21 @@
 ### 🚀🌟 BLAZINGLY FAST and MEMORY SAFE ElevenLabs VoiceChanger Setup Guide 🌟🚀 
-### 🚨👇 STEPS TO GET STARTED FROM EXE 👇🚨
-```https://github.com/s-a-ng/elevenlabs-voicechanger/releases/tag/v1.0.1```
- - 🎧 Install https://vb-audio.com/Cable/ 🎧 (restart computer afterwards)
- - Run program and add Bearer token when prompted
- <br></br>
-### 🐍👇 STEPS FROM SOURCE (For you debug demons out there) 👇🐍
+
+
+### 🐍👇 STEPS FROM SOURCE 👇🐍
  ```🐍I use Python 3.11.4🐍``` <br></br>
  ```pip install pyaudio pydub webrtcvad pygame termcolor ```
 
  - 🎧 Install https://vb-audio.com/Cable/ 🎧 (restart computer afterwards)
 
- - Get your🔑 Bearer Token 🔑 from ElevenLab's website (api for speech to speech is not released yet 🤫🤫🤫🕵️‍♂️🔒)
+ - Get your🔑 API Key 🔑 from ElevenLab's website
 
- - Start the program and paste in that Bearer token, entire thing (Bearer xxx) 🔥🔑
+ - Add it to line 11 🔥🔑
 
  - Switch your microphone input device to CABLE Input (VB-Audio Virtual Cable) 🎤🎤🎙️🎙️🎙️
 
  - You're all set!! ✅🏆🎉🤑🤑🤑
+
+
+
 
 Hope this didn't blind any of you 🔥🔥🔥🔥
