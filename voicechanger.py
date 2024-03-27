@@ -8,6 +8,7 @@ import time, wave, json
 
 import webrtcvad, requests, pyaudio
 
+API_KEY = os.getenv("ELEVENLABS_API_KEY")
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -26,7 +27,6 @@ def threaded_function(func):
         t.start()
         return t
     return wrapper
-
 
 
 def remove_emojis(text):
@@ -53,9 +53,9 @@ def remove_emojis(text):
     return emoji_pattern.sub(r'', text)
 
 
-def get_voices(Bearer):
+def get_voices(API_KEY):
     headers = {
-        "Authorization": Bearer
+        "xi-api-key": API_KEY
     }
 
     parsed_voices = { }
@@ -73,36 +73,7 @@ def get_voices(Bearer):
 
     return parsed_voices
 
-def check_bearer(Bearer):
-    headers = {
-        "Authorization": Bearer
-    }
-    response = requests.get("https://api.elevenlabs.io/v1/voices", headers=headers)
-    return response.status_code == 200
-
-def ask_for_token():
-    Bearer = input(colored("Token: ", "light_green"))
-    if not check_bearer(Bearer):
-        print(colored("Invalid token. Try again", "red"))
-        return ask_for_token()
-    print(colored("Valid token!", "green"))
-    return Bearer
-
-if not os.path.exists("Bearer.txt"):
-    with open("Bearer.txt", "w") as f:
-        print(colored("You are missing your token. Please add it below.", "blue"))
-        f.write(ask_for_token())
-
-with open("Bearer.txt", "r") as f:
-    Bearer = f.read()
-
-if not check_bearer(Bearer):
-    print(colored("Your bearer token is invalid. Enter your new one below.", "red"))
-    with open("Bearer.txt", "w") as f:
-        Bearer = ask_for_token()
-        f.write(Bearer)
-
-get_voices(Bearer)
+get_voices(API_KEY)
 
 while True: 
     voice_input = input(colored("Select your voice: ", "light_green"))
@@ -192,7 +163,7 @@ class AudioChunk:
         try: 
             url = f"https://api.elevenlabs.io/v1/speech-to-speech/{voice_id}/stream"
             headers = {
-                "Authorization" : Bearer
+                "xi-api-key" : API_KEY
             }
             data = {
                 "model_id": "eleven_english_sts_v2",
@@ -206,10 +177,8 @@ class AudioChunk:
             files = {'audio': ('audio.wav', self.wav_buffer, 'audio/wav')}
 
             response = requests.post(url, headers=headers, data=data, files=files)
-        #    print("repsonse")
             content = response.content
             if len(content) <= 200: 
-                #print(content)
                 try:
                     load = json.loads(content)
                     details = load["detail"]
@@ -220,8 +189,6 @@ class AudioChunk:
     {colored("ElevenLabs returned an error", "light_red")}:
         {colored(f'- Error type: "{error_type}"', "red")}
         {colored(f'- More details: "{message}"', "red")}
-
-    {colored(f"There is a good chance this error is because your Bearer token expired.{chr(10)}Please try restarting the program", "red")}
                     ''')
                     self.remove_chunk()
                     return 
