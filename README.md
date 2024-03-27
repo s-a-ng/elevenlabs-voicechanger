@@ -9,7 +9,7 @@
 
  - Get your🔑 API Key 🔑 from ElevenLab's website
 
- - Add it to line 11 🔥🔑
+ - Add it to line 11 or make a environment variable named ELEVENLABS_API_KEY🔥🔑
 
  - Switch your microphone input device to CABLE Input (VB-Audio Virtual Cable) 🎤🎤🎙️🎙️🎙️
 
