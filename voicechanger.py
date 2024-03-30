@@ -20,7 +20,7 @@ voices_map = {
 
 }
 
-def threaded_function(func):
+def non_blocking(func):
     def wrapper(*args, **kwargs):
         t = Thread(target=func, args=args, kwargs=kwargs)
         t.daemon = True
@@ -134,7 +134,7 @@ class AudioChunk:
     def remove_chunk(self):
         del voice_chunks[self.index]
 
-    @threaded_function
+    @non_blocking
     def begin_processing(self):
         if chunk_transcription_enabled:
             self.transcribe_then_sts()
@@ -216,7 +216,7 @@ stream = audio.open(format=pyaudio.paInt16,
                     frames_per_buffer=CHUNK)
 
 
-@threaded_function
+@non_blocking
 def record_audio():
     while True:
         frames = []
